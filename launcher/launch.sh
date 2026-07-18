@@ -6,6 +6,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+source "$SCRIPT_DIR/sync-lib.sh"
 
 # Detect Minecraft directory
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -26,27 +27,18 @@ fi
 echo "=== Minecraft Mod Sync ==="
 echo ""
 
-# Pull latest changes
+require_git_lfs
+
 echo "Pulling latest mods and resourcepacks..."
-cd "$REPO_DIR"
-git pull --ff-only origin main
+pull_latest "$REPO_DIR"
+verify_real_jars "$REPO_DIR"
 echo ""
 
-# Sync mods — mirror the repo's mods folder exactly
 echo "Syncing mods..."
-rm -f "$MC_DIR/mods/"*.jar 2>/dev/null || true
-cp "$REPO_DIR/mods/"*.jar "$MC_DIR/mods/"
-echo "  Installed $(ls "$REPO_DIR/mods/"*.jar 2>/dev/null | wc -l | tr -d ' ') mod(s)"
+sync_mods "$REPO_DIR" "$MC_DIR"
 
-# Sync resourcepacks — mirror the repo's resourcepacks folder exactly
 echo "Syncing resourcepacks..."
-rm -f "$MC_DIR/resourcepacks/"*.zip 2>/dev/null || true
-if ls "$REPO_DIR/resourcepacks/"*.zip 1>/dev/null 2>&1; then
-    cp "$REPO_DIR/resourcepacks/"*.zip "$MC_DIR/resourcepacks/"
-    echo "  Installed $(ls "$REPO_DIR/resourcepacks/"*.zip 2>/dev/null | wc -l | tr -d ' ') resourcepack(s)"
-else
-    echo "  No resourcepacks to sync"
-fi
+sync_resourcepacks "$REPO_DIR" "$MC_DIR"
 
 echo ""
 echo "Sync complete!"

@@ -1,0 +1,25 @@
+# Minecraft Fabric server — syncs mods from the repo, then runs the server.
+# Restart=always means an RCON `stop` (sent by the updater) comes back up
+# automatically with the freshly synced mods.
+#
+# Install (adjust paths/user first):
+#   sudo cp server/systemd/minecraft-server.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now minecraft-server
+
+[Unit]
+Description=Minecraft Fabric server (auto-syncing)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=pi
+Environment=MINECRAFT_SERVER_DIR=/home/pi/minecraft-fabric
+Environment=MINECRAFT_MIN_RAM=1G
+Environment=MINECRAFT_MAX_RAM=2G
+ExecStart=/home/pi/minecraft-server/launcher/server-start.sh
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

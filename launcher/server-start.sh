@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 # Minecraft Server Sync & Start — Raspberry Pi (Linux)
 # Pulls the latest mods from the shared repo, syncs them to the server, then starts it.
+# Run directly, or as the ExecStart of the minecraft-server systemd service.
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+source "$SCRIPT_DIR/sync-lib.sh"
 
 # --- CONFIGURATION ---
 # Set this to your Fabric server directory on the Pi
@@ -32,18 +34,19 @@ fi
 echo "=== Minecraft Server Sync ==="
 echo ""
 
-# Pull latest changes
-echo "Pulling latest mods and resourcepacks..."
-cd "$REPO_DIR"
-git pull --ff-only origin main
-echo ""
+require_git_lfs
 
-# Sync mods to server
-echo "Syncing mods to server..."
-mkdir -p "$SERVER_DIR/mods"
-rm -f "$SERVER_DIR/mods/"*.jar 2>/dev/null || true
-cp "$REPO_DIR/mods/"*.jar "$SERVER_DIR/mods/"
-echo "  Installed $(ls "$REPO_DIR/mods/"*.jar 2>/dev/null | wc -l | tr -d ' ') mod(s)"
+# A transient network outage shouldn't stop the server from booting with the
+# mods it already has, so sync failures are non-fatal here.
+echo "Pulling latest mods and resourcepacks..."
+if pull_latest "$REPO_DIR"; then
+    verify_real_jars "$REPO_DIR"
+    echo ""
+    echo "Syncing mods to server..."
+    sync_mods "$REPO_DIR" "$SERVER_DIR"
+else
+    echo "Warning: could not pull latest mods — starting with the current set."
+fi
 
 echo ""
 echo "Sync complete! Starting server..."
@@ -51,4 +54,4 @@ echo ""
 
 # Start the server
 cd "$SERVER_DIR"
-java -Xms"$MIN_RAM" -Xmx"$MAX_RAM" -jar "$SERVER_JAR" nogui
+exec java -Xms"$MIN_RAM" -Xmx"$MAX_RAM" -jar "$SERVER_JAR" nogui

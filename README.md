@@ -22,20 +22,19 @@ cd minecraft-server
 git lfs pull
 ```
 
-## Playing
-
-Instead of launching Minecraft directly, use the launcher script. It pulls the latest mods, syncs them to your Minecraft folder, then starts the game.
-
-### Mac
+### Mac / Linux: install the `minecraft` command
 
 ```bash
-./launcher/launch.sh
+./launcher/install.sh
 ```
 
-> Tip: You can create an alias in your shell profile:
-> ```bash
-> alias minecraft="~/path/to/minecraft-server/launcher/launch.sh"
-> ```
+This adds a `minecraft` command to your shell. From then on, just open a terminal and type:
+
+```bash
+minecraft
+```
+
+It pulls the latest mods, syncs them to your Minecraft folder, then starts the game.
 
 ### Windows
 
@@ -45,29 +44,19 @@ Double-click `launcher/launch.bat`, or run it from Command Prompt:
 launcher\launch.bat
 ```
 
-### Linux
-
-```bash
-./launcher/launch.sh
-```
-
 ## Adding or Removing Mods
 
 1. Add/remove `.jar` files in the `mods/` folder
 2. Add/remove `.zip` files in the `resourcepacks/` folder
-3. Commit and push:
+3. Open a PR to `main` and merge it
 
-```bash
-git add mods/ resourcepacks/
-git commit -m "Add/remove mod: ModName"
-git push
-```
-
-Everyone will get the changes next time they launch.
+Everyone gets the changes next time they type `minecraft`, and the Pi updates itself automatically (restarting once nobody is online).
 
 ## Server (Raspberry Pi)
 
-The server start script pulls latest mods before starting:
+The Pi runs the server via systemd and updates itself when PRs merge to `main`, via a GitHub webhook delivered over a Cloudflare Tunnel. Full one-time setup instructions live in [`server/SETUP.md`](server/SETUP.md).
+
+To run the server manually instead:
 
 ```bash
 # Set your server directory (defaults to ~/minecraft-server)

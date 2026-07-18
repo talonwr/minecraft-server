@@ -39,3 +39,6 @@ Thumbs.db
 
 # Claude
 CLAUDE.md
+
+# Python
+__pycache__/

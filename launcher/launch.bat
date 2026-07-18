@@ -15,6 +15,15 @@ if not exist "%MC_DIR%" (
     exit /b 1
 )
 
+REM Without Git LFS, git pull downloads placeholder text files instead of real jars.
+git lfs version >nul 2>&1
+if errorlevel 1 (
+    echo Error: Git LFS is not installed.
+    echo Install it from https://git-lfs.com/ then run: git lfs install
+    pause
+    exit /b 1
+)
+
 echo === Minecraft Mod Sync ===
 echo.
 
@@ -29,6 +38,7 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+git lfs pull
 echo.
 
 REM Sync mods
