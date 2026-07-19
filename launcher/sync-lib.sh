@@ -21,10 +21,11 @@ pull_latest() {
 
 # Detect LFS pointer files masquerading as jars (happens when someone cloned
 # before installing Git LFS). Bail out rather than install broken mods.
+# Scans every env subfolder (mods/common, mods/client, mods/server).
 verify_real_jars() {
     local repo_dir="$1"
     local jar
-    for jar in "$repo_dir/mods/"*.jar; do
+    for jar in "$repo_dir/mods/"*/*.jar; do
         [[ -f "$jar" ]] || continue
         if head -c 12 "$jar" | grep -q "version http"; then
             echo "Error: '$jar' is a Git LFS placeholder, not a real mod."
@@ -34,13 +35,22 @@ verify_real_jars() {
     done
 }
 
-# Mirror repo mods/resourcepacks into a target directory.
+# Mirror the given repo mod env-folders into <target_dir>/mods.
+# Usage: sync_mods <repo_dir> <target_dir> <env>...   e.g. sync_mods "$REPO" "$MC" common client
+# Mods live under mods/<env>/ (common = both sides, client = client-only, server = server-only).
 sync_mods() {
-    local repo_dir="$1" target_dir="$2"
+    local repo_dir="$1" target_dir="$2"; shift 2
+    local envs=("$@") sub jar count=0
     mkdir -p "$target_dir/mods"
     rm -f "$target_dir/mods/"*.jar 2>/dev/null || true
-    cp "$repo_dir/mods/"*.jar "$target_dir/mods/"
-    echo "  Installed $(ls "$repo_dir/mods/"*.jar 2>/dev/null | wc -l | tr -d ' ') mod(s)"
+    for sub in "${envs[@]}"; do
+        for jar in "$repo_dir/mods/$sub/"*.jar; do
+            [[ -f "$jar" ]] || continue
+            cp "$jar" "$target_dir/mods/"
+            count=$((count + 1))
+        done
+    done
+    echo "  Installed $count mod(s) from: ${envs[*]}"
 }
 
 sync_resourcepacks() {

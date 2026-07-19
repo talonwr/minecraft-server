@@ -1,0 +1,34 @@
+# Fabric Minecraft server, hosted inside a tmux session so admins can attach to
+# the console (`tmux attach -t minecraft`).
+#
+# This is the recommended unit for the auto-updating setup. The important change
+# over a plain tmux service is ExecStop: it sends `stop` and waits for a clean
+# save instead of hard-killing the JVM, so `systemctl restart minecraft` (used by
+# the updater) never risks world corruption.
+#
+# ExecStart (tmux-start.sh) lives in the server dir and is yours to edit — it's
+# where the RAM/JVM flags live. See SETUP.md for a reference version.
+#
+# Install (back up your current unit first):
+#   sudo cp /etc/systemd/system/minecraft.service ~/minecraft.service.bak 2>/dev/null || true
+#   sudo cp server/systemd/minecraft.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+
+[Unit]
+Description=Fabric Minecraft Server
+After=network.target
+
+[Service]
+User=maxmason
+WorkingDirectory=/home/maxmason/minecraft-server
+ExecStart=/home/maxmason/minecraft-server/tmux-start.sh
+ExecStop=/home/maxmason/minecraft-repo/server/tmux-graceful-stop.sh
+Environment=MINECRAFT_TMUX_SESSION=minecraft
+Environment=MINECRAFT_USER=maxmason
+Restart=on-failure
+RemainAfterExit=yes
+# Give the world time to save on stop/restart before systemd gives up.
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target

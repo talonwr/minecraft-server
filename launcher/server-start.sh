@@ -43,7 +43,7 @@ if pull_latest "$REPO_DIR"; then
     verify_real_jars "$REPO_DIR"
     echo ""
     echo "Syncing mods to server..."
-    sync_mods "$REPO_DIR" "$SERVER_DIR"
+    sync_mods "$REPO_DIR" "$SERVER_DIR" common server
 else
     echo "Warning: could not pull latest mods — starting with the current set."
 fi

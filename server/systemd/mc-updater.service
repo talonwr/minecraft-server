@@ -1,26 +1,22 @@
-# GitHub webhook listener — receives push events (via Cloudflare Tunnel),
-# syncs mods, and restarts the Minecraft server once it's empty.
+# Minecraft mod updater — polls the repo, syncs the server's mods, and restarts
+# the server once it's empty. Triggered by mc-updater.timer (not enabled directly).
 #
-# Install (adjust paths/user first, and create the secret file):
-#   echo "your-webhook-secret" > /home/pi/.mc-webhook-secret && chmod 600 /home/pi/.mc-webhook-secret
-#   sudo cp server/systemd/mc-updater.service /etc/systemd/system/
+# Install (adjust paths/user/branch first):
+#   sudo cp server/systemd/mc-updater.service server/systemd/mc-updater.timer /etc/systemd/system/
 #   sudo systemctl daemon-reload
-#   sudo systemctl enable --now mc-updater
+#   sudo systemctl enable --now mc-updater.timer
 
 [Unit]
-Description=Minecraft mod updater (GitHub webhook listener)
+Description=Minecraft mod updater (poll repo, sync mods, restart when empty)
 After=network-online.target
 Wants=network-online.target
 
 [Service]
-User=pi
-Environment=REPO_DIR=/home/pi/minecraft-server
-Environment=MINECRAFT_SERVER_DIR=/home/pi/minecraft-fabric
-Environment=WEBHOOK_SECRET_FILE=/home/pi/.mc-webhook-secret
-Environment=UPDATER_PORT=9000
-ExecStart=/usr/bin/python3 /home/pi/minecraft-server/server/updater.py
-Restart=always
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target
+Type=oneshot
+User=maxmason
+Environment=REPO_DIR=/home/maxmason/minecraft-repo
+Environment=MINECRAFT_SERVER_DIR=/home/maxmason/minecraft-server
+Environment=MINECRAFT_BRANCH=main
+Environment=MINECRAFT_TMUX_SESSION=minecraft
+Environment=MINECRAFT_SERVICE=minecraft
+ExecStart=/home/maxmason/minecraft-repo/server/poll-updater.sh

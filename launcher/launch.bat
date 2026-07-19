@@ -41,10 +41,12 @@ if errorlevel 1 (
 git lfs pull
 echo.
 
-REM Sync mods
+REM Sync mods (common = both sides, client = client-only). Server-only mods live
+REM in mods\server\ and are intentionally not installed on players' machines.
 echo Syncing mods...
 del /q "%MC_DIR%\mods\*.jar" 2>nul
-copy /y "%REPO_DIR%\mods\*.jar" "%MC_DIR%\mods\" >nul
+copy /y "%REPO_DIR%\mods\common\*.jar" "%MC_DIR%\mods\" >nul
+copy /y "%REPO_DIR%\mods\client\*.jar" "%MC_DIR%\mods\" >nul
 echo   Mods synced.
 
 REM Sync resourcepacks

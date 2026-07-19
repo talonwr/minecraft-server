@@ -1,0 +1,15 @@
+# Runs the mod updater a couple of minutes after boot, then every few minutes.
+# Enable with: sudo systemctl enable --now mc-updater.timer
+
+[Unit]
+Description=Poll the Minecraft mods repo for updates
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=3min
+# Don't stampede if the Pi was asleep/off for a while.
+Persistent=true
+Unit=mc-updater.service
+
+[Install]
+WantedBy=timers.target

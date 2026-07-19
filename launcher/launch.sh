@@ -35,7 +35,7 @@ verify_real_jars "$REPO_DIR"
 echo ""
 
 echo "Syncing mods..."
-sync_mods "$REPO_DIR" "$MC_DIR"
+sync_mods "$REPO_DIR" "$MC_DIR" common client
 
 echo "Syncing resourcepacks..."
 sync_resourcepacks "$REPO_DIR" "$MC_DIR"

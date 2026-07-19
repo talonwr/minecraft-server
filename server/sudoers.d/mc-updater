@@ -1,0 +1,7 @@
+# Lets the updater bounce the server without a password — and nothing else.
+# Install with (validates before saving):
+#   sudo install -m 0440 server/sudoers.d/mc-updater /etc/sudoers.d/mc-updater
+#   sudo visudo -cf /etc/sudoers.d/mc-updater
+#
+# Adjust the user / systemctl path if yours differ (`command -v systemctl`).
+maxmason ALL=(root) NOPASSWD: /usr/bin/systemctl restart minecraft, /usr/bin/systemctl restart minecraft.service
