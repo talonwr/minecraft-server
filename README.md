@@ -36,6 +36,14 @@ minecraft
 
 It pulls the latest mods, syncs them to your Minecraft folder, then starts the game.
 
+To play on the home server (the Mac mini), type:
+
+```bash
+minecraft start
+```
+
+This opens Minecraft through [Prism Launcher](https://prismlauncher.org/) (installed for you if missing), already logged in, and joins the server directly. The first time, it opens Prism so you can sign in to your Microsoft account once. It also adds the server to the Multiplayer list in the regular Minecraft launcher.
+
 ### Windows
 
 Double-click `launcher/launch.bat`, or run it from Command Prompt:

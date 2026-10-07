@@ -8,6 +8,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 source "$SCRIPT_DIR/sync-lib.sh"
 
+# `minecraft start` skips mod sync and jumps straight into the home server.
+if [[ "${1:-}" == "start" ]]; then
+    exec "$SCRIPT_DIR/start.sh"
+fi
+
 # Detect Minecraft directory
 if [[ "$OSTYPE" == "darwin"* ]]; then
     MC_DIR="$HOME/Library/Application Support/minecraft"
