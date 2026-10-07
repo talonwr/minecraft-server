@@ -2,8 +2,8 @@
 
 Shared mod and resourcepack repo for our Minecraft server. Everyone pulls from this repo to stay in sync.
 
-**Minecraft version:** 1.21.11
-**Mod loader:** Fabric (fabric-loader-0.18.4)
+**Minecraft version:** 26.3
+**Mod loader:** Fabric (fabric-loader-0.19.5)
 
 ## Setup (First Time)
 
@@ -12,7 +12,7 @@ Shared mod and resourcepack repo for our Minecraft server. Everyone pulls from t
 - [Git](https://git-scm.com/downloads) installed
 - [Git LFS](https://git-lfs.com/) installed (`git lfs install` after installing)
 - Minecraft Java Edition installed and launched at least once
-- [Fabric Loader](https://fabricmc.net/use/installer/) installed for Minecraft 1.21.11
+- [Fabric Loader](https://fabricmc.net/use/installer/) installed for Minecraft 26.3
 
 ### Clone the Repo
 
